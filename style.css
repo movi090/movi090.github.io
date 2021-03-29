@@ -1,0 +1,96 @@
+.map
+{
+	width:100%; 
+	border:none;
+	height:90vh;
+}
+header{
+	display:flex;
+	flex-wrap:no-wrap;
+	justify-content:space-between;
+}
+body {
+  background-color:#24eded;
+  margin:0;
+  height:100vh;
+}
+.border-button {
+  text-decoration: none;
+  display: inline-block;
+  padding: 20px 30px;
+  margin: 10px 20px;
+  position: relative;
+  color: white;
+  border: 3px solid rgba(255, 255, 255, .4);
+  background: none;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+.border-button:before, .border-button:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  box-sizing: border-box;
+}
+.border-button:before {
+  bottom: 0;
+  left: 0;
+  border-left: 1px solid white;
+  border-top: 1px solid white;
+  transition: 0s ease opacity .8s, .2s ease width .4s, .2s ease height .6s;
+}
+.border-button:after {
+  top: 0;
+  right: 0;
+  border-right: 1px solid white;
+  border-bottom: 1px solid white;
+  transition: 0s ease opacity .4s, .2s ease width, .2s ease height .2s;
+}
+.border-button:hover:before, 
+.border-button:hover:after {
+  height: 100%;
+  width: 100%;
+  opacity: 1;
+}
+.border-button:hover:before {
+  transition: 0s ease opacity 0s, .2s ease height, .2s ease width .2s;
+}
+.border-button:hover:after {
+  transition: 0s ease opacity .4s, .2s ease height .4s, .2s ease width .6s;
+}
+.border-button:hover 
+{
+  background: rgba(255, 255, 255, .2);
+}
+
+.ex2>h1
+{
+	margin:0;
+	box-sizing:border-box;
+	border:2px solid rgba(255, 255, 255, .4);
+	padding:10px;
+	border-radius:20px;
+	margin-left:50px;
+	color:white;
+	border-color:white;
+	font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+	text-decoration: none;
+	letter-spacing: 2px;
+	background: none;
+	position: relative;
+}
+.ex2
+{
+display:flex;
+align-items:center;	
+}
+.form
+{
+	width:50%;
+}

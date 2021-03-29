@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Карта Проблем</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+   </head>
+<body>
+<header>
+<div class=ex2><h1>Карта Проблем</h1></div>
+<nav>
+<a href="#" onclick="sck()" class="border-button">Карта</a>
+<a href="#" onclick="sct()" class="border-button">Отправить заявку</a>
+<a href="#" onclick="scg()" class="border-button">Календарь</a>
+<a href="#" onclick="scl()" class="border-button">Связь с нами</a>
+</nav>
+</header>
+<iframe id="i1" class="map" src="https://yandex.ru/map-widget/v1/?um=constructor%3Af440edea82a4d977c078e307be1996954228f4594c37d804de90672d41912169&amp;source=constructor"></iframe><br>
+<script>
+function sct()
+{
+document.getElementById("i1").src="https://forms.gle/YouYkDRMDF9Cd1Zg8";
+
+}
+function sck()
+{
+document.getElementById("i1").src="https://yandex.ru/map-widget/v1/?um=constructor%3Af440edea82a4d977c078e307be1996954228f4594c37d804de90672d41912169&amp;source=constructor";
+
+}
+function scg()
+{
+document.getElementById("i1").src="";
+}
+function scl()
+{
+document.getElementById("i1").src="";
+}
+</script>
+</body>
+</html>
