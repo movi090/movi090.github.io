@@ -1,194 +1,1175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Абсолютики | Главная</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Russo+One&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр «Распределение бюджета»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563eb;
+    --blue-dark:#1d4ed8;
+    --green:#16a34a;
+    --green-light:#22c55e;
+    --red:#dc2626;
+    --amber:#f59e0b;
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --radius:16px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ -webkit-text-size-adjust:100%; }
+
+  body{
+    margin:0;
+    font-family:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background:
+      radial-gradient(1100px 500px at 50% -250px, #e0ecff 0%, rgba(224,236,255,0) 70%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  .app{
+    max-width:760px;
+    margin:0 auto;
+    padding:20px 16px 72px;
+  }
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-weight:800;
+    font-size:16px;
+    letter-spacing:-.02em;
+  }
+  .brand .logo{
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    background:linear-gradient(135deg,#2563eb,#16a34a);
+    border-radius:11px;
+    font-size:17px;
+    box-shadow:0 6px 16px -8px rgba(37,99,235,.9);
+  }
+  .tip-btn{
+    border:1.5px solid var(--border);
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+    font-weight:600;
+    font-size:14px;
+    padding:9px 14px;
+    border-radius:11px;
+    cursor:pointer;
+    transition:background .18s, border-color .18s, transform .1s;
+    white-space:nowrap;
+  }
+  .tip-btn:hover{ background:#f8fafc; border-color:#cbd5e1; }
+  .tip-btn:active{ transform:scale(.97); }
+
+  .tip-box{
+    display:none;
+    background:#eff6ff;
+    border:1.5px solid #bfdbfe;
+    color:#1e40af;
+    border-radius:14px;
+    padding:13px 16px;
+    font-size:14.5px;
+    font-weight:500;
+    margin-bottom:16px;
+    animation:fadeUp .3s ease;
+  }
+  .tip-box.show{ display:block; }
+
+  /* ---------- Screens ---------- */
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fadeUp .38s cubic-bezier(.22,1,.36,1); }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:none; }
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:26px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 18px 40px -28px rgba(15,23,42,.35);
+  }
+
+  h1{
+    font-size:24px;
+    line-height:1.25;
+    letter-spacing:-.025em;
+    margin:0 0 8px;
+    font-weight:800;
+  }
+  .subtitle{
+    margin:0 0 24px;
+    color:var(--muted);
+    font-size:15px;
+  }
+
+  .section-title{
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:-.01em;
+    margin:28px 0 12px;
+  }
+
+  /* ---------- Inputs ---------- */
+  .field{ position:relative; }
+
+  .field input{
+    width:100%;
+    padding:15px 38px 15px 16px;
+    font-family:inherit;
+    font-size:17px;
+    font-weight:600;
+    color:var(--text);
+    background:#fff;
+    border:1.5px solid var(--border);
+    border-radius:13px;
+    outline:none;
+    transition:border-color .16s, box-shadow .16s, background .16s;
+    font-variant-numeric:tabular-nums;
+  }
+  .field input::placeholder{ font-weight:500; color:#94a3b8; }
+  .field input:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(37,99,235,.13);
+  }
+  .field .suffix{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+    font-weight:700;
+    font-size:15px;
+    pointer-events:none;
+  }
+
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  input[type=number]{ -moz-appearance:textfield; appearance:textfield; }
+
+  .field input.invalid{
+    border-color:var(--red);
+    background:#fff5f5;
+    box-shadow:0 0 0 4px rgba(220,38,38,.11);
+  }
+
+  .hint{
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--muted);
+    margin-top:10px;
+    min-height:20px;
+    transition:color .2s;
+  }
+  .hint.warn{ color:#b45309; }
+  .hint.error{ color:var(--red); }
+  .hint.ok{ color:var(--green); }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:block;
+    width:100%;
+    padding:16px 18px;
+    border:none;
+    border-radius:14px;
+    font-family:inherit;
+    font-size:16.5px;
+    font-weight:700;
+    letter-spacing:-.01em;
+    cursor:pointer;
+    transition:transform .12s, box-shadow .2s, background .2s, color .2s, opacity .2s;
+  }
+  .btn:active:not(:disabled){ transform:scale(.985); }
+
+  .btn-primary{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    box-shadow:0 10px 24px -12px rgba(37,99,235,.95);
+  }
+  .btn-primary:hover:not(:disabled){ box-shadow:0 14px 28px -12px rgba(37,99,235,1); }
+
+  .btn:disabled{
+    opacity:.42;
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
+  }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--muted);
+    border:1.5px solid var(--border);
+    font-weight:600;
+    font-size:15px;
+    padding:14px 18px;
+  }
+  .btn-ghost:hover{ background:#f8fafc; color:var(--text); border-color:#cbd5e1; }
+
+  .actions{ display:grid; gap:10px; margin-top:24px; }
+
+  /* ---------- Category rows ---------- */
+  .cat{
+    display:grid;
+    grid-template-columns:1fr 158px;
+    gap:6px 14px;
+    align-items:center;
+    padding:13px 15px;
+    background:#fff;
+    border:1.5px solid var(--border);
+    border-radius:15px;
+    margin-bottom:10px;
+    transition:border-color .16s, background .16s;
+  }
+  .cat:focus-within{ border-color:#bfdbfe; background:#f8fbff; }
+
+  .cat-label{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    line-height:1.3;
+  }
+  .cat-icon{
+    font-size:21px;
+    line-height:1;
+    width:27px;
+    text-align:center;
+    flex:none;
+  }
+
+  .cat-extra{ grid-column:1 / -1; margin-top:8px; }
+  .cat-extra input{
+    width:100%;
+    padding:12px 15px;
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:500;
+    color:var(--text);
+    border:1.5px dashed #cbd5e1;
+    border-radius:11px;
+    outline:none;
+    background:#fbfdff;
+    transition:border-color .16s, box-shadow .16s;
+  }
+  .cat-extra input::placeholder{ color:#94a3b8; font-weight:500; }
+  .cat-extra input:focus{
+    border-style:solid;
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(37,99,235,.1);
+  }
+
+  /* ---------- Summary ---------- */
+  .summary{
+    background:#f8fafc;
+    border:1.5px solid var(--border);
+    border-radius:17px;
+    padding:17px 18px;
+    margin:20px 0 16px;
+  }
+  .summary-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    font-size:14.5px;
+    font-weight:500;
+    color:var(--muted);
+    margin-bottom:9px;
+  }
+  .summary-row b{
+    font-size:20px;
+    font-weight:800;
+    color:var(--text);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em;
+  }
+  .summary-row b.neg{ color:var(--red); }
+  .summary-row .pct{
+    font-size:15px;
+    font-weight:700;
+    color:var(--muted);
+  }
+  .summary-msg{
+    font-size:13.5px;
+    font-weight:600;
+    margin:12px 0 0;
+    color:var(--muted);
+    min-height:19px;
+  }
+  .summary-msg.error{ color:var(--red); }
+  .summary-msg.ok{ color:var(--green); }
+
+  /* ---------- Progress bar ---------- */
+  .bar{
+    height:10px;
+    border-radius:99px;
+    background:#e2e8f0;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    width:0;
+    border-radius:99px;
+    background:linear-gradient(90deg,#2563eb,#16a34a);
+    transition:width .4s cubic-bezier(.22,1,.36,1), background .35s;
+  }
+
+  /* ---------- Result ---------- */
+  .score-card{
+    background:linear-gradient(160deg,#f8fbff,#f1f7ff);
+    border:1.5px solid #dbeafe;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:6px;
+  }
+  .score-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:14px;
+  }
+  .score-num{
+    font-size:42px;
+    font-weight:800;
+    letter-spacing:-.04em;
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .score-label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .score-emoji{
+    font-size:38px;
+    line-height:1;
+    flex:none;
+  }
+  .verdict{
+    margin:14px 0 0;
+    font-size:15px;
+    font-weight:600;
+    line-height:1.45;
+    color:var(--text);
+  }
+  .prev-compare{
+    display:none;
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px dashed #cbd5e1;
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--muted);
+  }
+  .prev-compare.show{ display:block; }
+  .prev-compare b{ color:var(--text); }
+
+  /* ---------- Table ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14.5px;
+  }
+  th{
+    text-align:left;
+    font-size:11.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.055em;
+    color:var(--muted);
+    padding:0 0 10px;
+    border-bottom:1.5px solid var(--border);
+  }
+  th.num, td.num{ text-align:right; }
+  td{
+    padding:11px 0;
+    border-bottom:1px solid #f1f5f9;
+    vertical-align:top;
+  }
+  td.num{
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+    padding-left:10px;
+  }
+  td .note-text{
+    font-weight:500;
+    font-size:13px;
+    color:var(--muted);
+  }
+  tfoot td{
+    border-bottom:none;
+    border-top:1.5px solid var(--border);
+    font-weight:800;
+    padding-top:13px;
+  }
+  tfoot tr:first-child td{ border-top:1.5px solid var(--border); }
+  tfoot .sub td{
+    font-weight:600;
+    color:var(--muted);
+    border-top:none;
+    padding-top:6px;
+    font-size:13.5px;
+  }
+
+  /* ---------- Issues ---------- */
+  .issue{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding:12px 14px;
+    border-radius:13px;
+    font-size:14px;
+    font-weight:500;
+    line-height:1.45;
+    margin-bottom:8px;
+  }
+  .issue .ico{ flex:none; font-size:15px; line-height:1.4; }
+  .issue.error{ background:#fef2f2; border:1.5px solid #fecaca; color:#991b1b; }
+  .issue.warn{ background:#fffbeb; border:1.5px solid #fde68a; color:#92400e; }
+  .issue.ok{ background:#f0fdf4; border:1.5px solid #bbf7d0; color:#166534; }
+
+  /* ---------- Misc ---------- */
+  .last-calc{
+    display:none;
+    margin-top:16px;
+    padding:12px 15px;
+    background:#f8fafc;
+    border:1.5px dashed var(--border);
+    border-radius:13px;
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--muted);
+    text-align:center;
+  }
+  .last-calc.show{ display:block; }
+  .last-calc b{ color:var(--text); }
+
+  .muted{ color:var(--muted); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:560px){
+    .app{ padding:14px 12px 60px; }
+    .card{ padding:20px 16px; border-radius:20px; }
+    h1{ font-size:21px; }
+    .subtitle{ font-size:14px; margin-bottom:20px; }
+    .cat{ grid-template-columns:1fr 116px; gap:6px 10px; padding:12px 12px; }
+    .cat-label{ font-size:14px; gap:9px; }
+    .cat-icon{ font-size:19px; width:23px; }
+    .field input{ font-size:16px; padding:13px 32px 13px 13px; }
+    .field .suffix{ right:12px; font-size:14px; }
+    .summary-row b{ font-size:18px; }
+    .score-num{ font-size:36px; }
+    .score-emoji{ font-size:32px; }
+    .btn{ font-size:16px; padding:15px; }
+    table{ font-size:13.5px; }
+  }
+</style>
 </head>
 <body>
-<div class="wrapper">
 
-    <header>
+<div class="app">
 
-        <nav class="nav">
-            <ul class="navbar">
-                <li class="nav_link--left_item"><a href="#">Участники</a></li>
-                <li class="nav_link--left_item"><a href="#">Сезоны</a></li>
-                <li class="nav_link--left_item"><a href="#">История</a></li>
-                
-                <li class="nav_link--right_item" style="margin-right: 25px;"><a href="#">Форум</a></li>
-                <li class="nav_link--right_item"><a href="#">Карточки</a></li>
-                <li class="nav_link--right_item"><a href="#about_us">Про клан</a></li>
-            </ul>
-            <a href="#" class="navbar_logo"><img src="img/logo.png" alt="logo" width="70"></a>
-        </nav>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">💰</span>
+      <span>Бюджет-тренажёр</span>
+    </div>
+    <button class="tip-btn" id="tipBtn">💡 Совет</button>
+  </header>
 
-        <div class="intro">
-            <video autoplay loop muted>
-                <source type="video/webm" src="img/ban 720.mp4">
-            </video>
+  <div class="tip-box" id="tipBox"></div>
+
+  <!-- ============ SCREEN 0 ============ -->
+  <section class="screen active" id="screen0">
+    <div class="card">
+      <h1>Сколько денег у тебя на этот месяц?</h1>
+      <p class="subtitle">Введи сумму, которой располагаешь. Дальше распределим её по категориям и проверим, насколько бюджет сбалансирован.</p>
+
+      <div class="field">
+        <input type="number" id="budgetInput" min="1" step="100" inputmode="decimal"
+               placeholder="Например, 27 000 ₽" autocomplete="off">
+        <span class="suffix">₽</span>
+      </div>
+
+      <div class="hint" id="budgetHint"></div>
+
+      <div style="margin-top:20px">
+        <button class="btn btn-primary" id="startBtn" disabled>Начать распределение</button>
+      </div>
+
+      <div class="last-calc" id="lastCalc"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 1 ============ -->
+  <section class="screen" id="screen1">
+    <div class="card">
+      <h1>Распредели свой бюджет</h1>
+      <p class="subtitle">Твой бюджет: <b id="budgetDisplay">0 ₽</b></p>
+
+      <div id="categories"></div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Остаток</span>
+          <b id="remainingVal">0 ₽</b>
         </div>
-    </header>
-
-    <main>
-
-        <section class="section">
-        <div id="about_us"></div>
-            <div class="container">
-
-                <h1 class="sec_h1">Что такое клан Абсолютики?</h1>
-
-                <div class="sec">
-
-                    <div class="sec_info sec_item">
-                        <p>
-                            Наш клан представляет собой объединение лучших из лучших, мы очень заботимся об участниках и стараемся чтобы им было приятно находится в нашем клане! Главная цель клана на каждый сезон Extracards - это забирать топы во всех рейтингах, а также быть лучшими из лучших
-                        </p>
-                        <p>
-                            В клане вы можете хорошо отдохнуть и поразвлечься с функциями клана.
-                        </p>
-                        <p>
-                            Одна из главный функций нашего клана - карточки профиля
-                        </p>
-                    </div>
-
-                    <div class="sec_stat sec_item">
-                        <div class="sec_stat_card">
-                            <div class="sec_stat_card_p">
-                                <p class="stat_num">4</p>
-                                <p class="stat_info">Участников клана</p>
-
-                                <p class="stat_num" style="padding-top: 20px;">23 852 994</p>
-                                <p class="stat_info">Клановой мощи</p>
-
-                                <p class="stat_num"  style="padding-top: 20px;">5</p>
-                                <p class="stat_info">Игроков в рейтинге топ 5 верса</p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div id="about_us"></div>
-                <div class="container">
-    
-                    <h1 class="sec_h1">Что такое Карточки профиля?</h1>
-    
-                    <div class="sec">
-
-                        <div class="sec_item sec_slider">
-
-                            <div class="sec_middle">
-                                <div class="sec_slides">
-                                    <input type="radio" class="sec_r" id="sec_r1">
-                                    <input type="radio" class="sec_r" id="sec_r2">
-                                    <input type="radio" class="sec_r" id="sec_r3">
-
-                                    <div class="sec_slide sec_s1">
-                                        <a href="#"><img src="img/hochet_koks.png" alt=""></a>
-                                    </div>
-                                    <div class="sec_slide">
-                                        <a href="#"><img src="img/hochet_koks.png" alt=""></a>
-                                    </div>
-                                    <div class="sec_slide">
-                                        <a href="#"><img src="img/hochet_koks.png" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
-    
-                        <div class="sec_info sec_item">
-                            <p align="right" style="padding-left: 15px;">
-                                Карточки профиля это индивидуальная карточка каждого участника нашего клана, создана с целью повысить сопернический дух между участниками и стремление стать лучшим! Помимо этого карточки содержат информацию о сезоне в котором эта карточка была получена, благодаря чему можно сравнивать себя с прошлыми сезонами или игроками из нынешнего и прошлого сезонов
-                            </p>
-
-                            <div id="btn">
-                                <a href="#" class="btn">Получить карточку профиля</a>
-                            </div>
-                        </div>
-    
-                    </div>
-
-                </div>
-            </section>
-
-            <section class="section">
-                <div id="about_us"></div>
-                    <div class="container">
-        
-                        <h1 class="sec_h1">Наши Админы</h1>
-        
-                        <div class="sec">
-        
-                            <div class="sec_admin">
-
-                                <div class="sec_adm_center">
-                                    <div class="sec_adm_whyy sec_adm">
-                                        <img src="img/whyyy.png" alt="" class="sec_admin_img">
-                                        <img src="img/Polygon 1.png" alt="" class="sec_adm_img_whyy sec_adm_img">
-                                        <h1>Глава клана</h1>
-                                    </div>
-                                    
-                                    <div class="sec_adm_sinaf sec_adm">
-                                        <img src="img/sinaf.jpg" alt="" class="sec_admin_img">
-                                        <img src="img/Group 4.png" alt="" class="sec_adm_img_sinaf sec_adm_img">
-                                        <h1>Главный дизайнер</h1>
-                                    </div>
-                                </div>
-
-                                <div class="sec_adm_abs" >
-
-                                    <div class="sec_adm_pvwwell sec_adm" style="margin-right: 150px;">
-                                        <img src="img/pvwwell.jpg" alt="" class="sec_admin_img">
-                                        <img src="img/Group 3.png" alt="" class="sec_adm_img_pvwwell sec_adm_img">
-                                        <h1>Соул Гудман</h1>
-                                    </div>
-                                    
-                                    <div class="sec_adm_ment sec_adm" style="margin-left: 150px;">
-                                        <img src="img/mentalist.png" alt="" class="sec_admin_img">
-                                        <img src="img/Group 5.png" alt="" class="sec_adm_img_ment sec_adm_img">
-                                        <h1>Сильнейший мотиватор</h1>
-                                    </div>
-                                    
-                                </div>
-
-                            </div>
-        
-                        </div>
-
-                    </div>
-                </section>
-
-    </main>
-
-    <hr>
-    <footer>
-        
-        <div class="footer_menu">
-            <h1>Что у нас есть ещё?</h1>
-            
-            <img src="img/footer.png" alt="" class="footer_bg">
-
-            <p><a href="#">КОМАНДА РАЗРАБОТЧИКОВ</a></p>
-            <p><a href="#">КАРТОЧКИ ПРОФИЛЯ</a></p>
-            <p><a href="#">ИСТОРИЯ ЭМБЛЕМЫ</a></p>
-            <p><a href="#">УЧАСТНИКИ КЛАНА</a></p>
-            <p><a href="#">СЕЗОНЫ</a></p>
-            <p><a href="#">ФОРУМ</a></p>
-
-            <p class="copy">&copy; Copyright 2024</p>
+        <div class="summary-row">
+          <span>Распределено</span>
+          <span style="display:flex;align-items:baseline;gap:8px">
+            <b id="allocatedVal">0 ₽</b>
+            <span class="pct" id="allocatedPct">0%</span>
+          </span>
         </div>
+        <div class="bar"><div class="bar-fill" id="allocBar"></div></div>
+        <p class="summary-msg" id="summaryMsg"></p>
+      </div>
 
-    </footer>
+      <div class="actions">
+        <button class="btn btn-primary" id="checkBtn" disabled>Проверить бюджет</button>
+        <button class="btn btn-ghost" id="changeBudgetBtn1">Изменить сумму бюджета</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2 ============ -->
+  <section class="screen" id="screen2">
+    <div class="card">
+      <h1>Результат распределения</h1>
+      <p class="subtitle">Твой бюджет: <b id="resBudget">0 ₽</b></p>
+
+      <div class="score-card">
+        <div class="score-top">
+          <div>
+            <div class="score-num" id="scoreNum">0%</div>
+            <div class="score-label">Эффективность распределения</div>
+          </div>
+          <div class="score-emoji" id="scoreEmoji">📊</div>
+        </div>
+        <div class="bar"><div class="bar-fill" id="scoreBar"></div></div>
+        <p class="verdict" id="verdict"></p>
+        <div class="prev-compare" id="prevCompare"></div>
+      </div>
+
+      <h2 class="section-title">Распределение по категориям</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Категория</th>
+            <th class="num">Сумма</th>
+            <th class="num">Доля</th>
+          </tr>
+        </thead>
+        <tbody id="resultTable"></tbody>
+        <tfoot id="resultFoot"></tfoot>
+      </table>
+
+      <h2 class="section-title">Проверка и рекомендации</h2>
+      <div id="issues"></div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="retryBtn">Попробовать снова</button>
+        <button class="btn btn-ghost" id="changeBudgetBtn2">Изменить сумму бюджета</button>
+      </div>
+    </div>
+  </section>
 
 </div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+     Данные
+     ========================================================= */
+  const CATEGORIES = [
+    { id: 'food',      icon: '🍔', label: 'Еда' },
+    { id: 'transport', icon: '🚌', label: 'Транспорт' },
+    { id: 'fun',       icon: '🎮', label: 'Развлечения' },
+    { id: 'internet',  icon: '📱', label: 'Связь и интернет' },
+    { id: 'housing',   icon: '🏠', label: 'Оплата общежития/квартиры' },
+    { id: 'hygiene',   icon: '🧼', label: 'Средства личной гигиены' },
+    { id: 'clothes',   icon: '👕', label: 'Одежда, обувь' },
+    { id: 'other',     icon: '📦', label: 'Разное', hasNote: true }
+  ];
+
+  const TIPS = [
+    'Правило 50/30/20: 50% дохода — необходимые расходы, 30% — желания, 20% — сбережения.',
+    'Сначала откладывай, потом трать: сбережения — это такая же обязательная статья, как еда.',
+    'Веди учёт расходов хотя бы месяц — обычно 10–15% трат оказываются незаметными и лишними.',
+    'Финансовая подушка = 3–6 месячных расходов. Начни хотя бы с 5 000 ₽ на отдельном счёте.',
+    'Перед крупной покупкой подожди 48 часов. Если желание не пропало — покупай осознанно.',
+    'Подписки съедают больше, чем кажется. Раз в месяц проверяй, чем ты реально пользуешься.',
+    'Не бери кредит на развлечения и вещи, которые дешевеют. Кредит — только на то, что растёт в цене.',
+    'Планируй бюджет на месяц вперёд: неожиданности дешевле, когда они запланированы.'
+  ];
+
+  const LS_KEY = 'budget_trainer_last_v1';
+  const EPS = 0.005;
+
+  /* =========================================================
+     Состояние
+     ========================================================= */
+  const state = {
+    budget: 0,
+    values: {},
+    note: ''
+  };
+
+  /* =========================================================
+     Утилиты
+     ========================================================= */
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel));
+
+  function round2(n) { return Math.round(n * 100) / 100; }
+
+  function fmt(n) {
+    return round2(n).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+  }
+
+  function pctFmt(n) {
+    return (Math.round(n * 10) / 10).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + '%';
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sumValues() {
+    return CATEGORIES.reduce((acc, c) => acc + (state.values[c.id] || 0), 0);
+  }
+
+  function showScreen(n) {
+    $$('.screen').forEach((s) => s.classList.remove('active'));
+    const target = document.getElementById('screen' + n);
+    if (target) target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* =========================================================
+     localStorage
+     ========================================================= */
+  function saveLast(data) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { /* ignore */ }
+  }
+  function loadLast() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  /* =========================================================
+     Построение списка категорий
+     ========================================================= */
+  function buildCategories() {
+    const wrap = document.getElementById('categories');
+    wrap.innerHTML = CATEGORIES.map((c) => {
+      const extra = c.hasNote
+        ? `<div class="cat-extra">
+             <input type="text" id="note-other" maxlength="60"
+                    placeholder="Что именно? (необязательно)" autocomplete="off">
+             <div class="hint" id="noteHint" style="margin-top:8px"></div>
+           </div>`
+        : '';
+      return `
+        <div class="cat">
+          <label class="cat-label" for="inp-${c.id}">
+            <span class="cat-icon">${c.icon}</span>
+            <span>${c.label}</span>
+          </label>
+          <div class="field">
+            <input class="amount-input" id="inp-${c.id}" data-id="${c.id}"
+                   type="number" min="0" step="100" inputmode="decimal"
+                   placeholder="0" autocomplete="off">
+            <span class="suffix">₽</span>
+          </div>
+          ${extra}
+        </div>`;
+    }).join('');
+
+    // слушатели сумм
+    $$('.amount-input').forEach((inp) => {
+      inp.addEventListener('input', onAmountInput);
+      inp.addEventListener('blur', () => {
+        // мягкая нормализация: пусто -> пусто, иначе число
+        if (inp.value !== '' && !isFinite(Number(inp.value))) inp.value = '';
+      });
+    });
+
+    // слушатель текста «Разное»
+    const noteEl = document.getElementById('note-other');
+    if (noteEl) {
+      noteEl.addEventListener('input', () => {
+        state.note = noteEl.value;
+        updateNoteHint();
+      });
+    }
+  }
+
+  function onAmountInput(e) {
+    const el = e.target;
+    const id = el.dataset.id;
+
+    let v = el.value === '' ? 0 : Number(el.value);
+
+    if (!isFinite(v) || v < 0) {
+      v = 0;
+      el.value = '';
+    }
+
+    state.values[id] = v;
+    updateSummary(el);
+  }
+
+  function updateNoteHint() {
+    const hint = document.getElementById('noteHint');
+    const noteEl = document.getElementById('note-other');
+    if (!hint || !noteEl) return;
+
+    const sum = state.values.other || 0;
+    if (sum > 0 && !noteEl.value.trim()) {
+      hint.textContent = 'Рекомендуем указать, на что именно';
+      hint.className = 'hint warn';
+    } else {
+      hint.textContent = '';
+      hint.className = 'hint';
+    }
+  }
+
+  /* =========================================================
+     Экран 0 — валидация бюджета
+     ========================================================= */
+  const budgetInput = document.getElementById('budgetInput');
+  const budgetHint = document.getElementById('budgetHint');
+  const startBtn = document.getElementById('startBtn');
+
+  function validateBudget() {
+    const raw = budgetInput.value.trim();
+    const n = Number(raw);
+
+    const valid = raw !== '' && isFinite(n) && n > 0;
+    startBtn.disabled = !valid;
+
+    if (raw === '') {
+      budgetHint.textContent = '';
+      budgetHint.className = 'hint';
+      return;
+    }
+    if (!valid) {
+      budgetHint.textContent = 'Введи положительное число больше нуля';
+      budgetHint.className = 'hint error';
+      return;
+    }
+    if (n < 5000) {
+      budgetHint.textContent = 'Очень маленькая сумма, распределение будет очень жёстким, но попробовать можно';
+      budgetHint.className = 'hint warn';
+      return;
+    }
+    budgetHint.textContent = 'Отлично! Распределим ' + fmt(n) + ' ₽ по категориям.';
+    budgetHint.className = 'hint ok';
+  }
+
+  budgetInput.addEventListener('input', validateBudget);
+  budgetInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !startBtn.disabled) startBtn.click();
+  });
+
+  startBtn.addEventListener('click', () => {
+    const n = Number(budgetInput.value);
+    if (!(n > 0)) return;
+
+    state.budget = round2(n);
+    state.values = {};
+    state.note = '';
+    CATEGORIES.forEach((c) => { state.values[c.id] = 0; });
+
+    $$('.amount-input').forEach((i) => { i.value = ''; i.classList.remove('invalid'); });
+    const noteEl = document.getElementById('note-other');
+    if (noteEl) noteEl.value = '';
+    updateNoteHint();
+
+    document.getElementById('budgetDisplay').textContent = fmt(state.budget) + ' ₽';
+    updateSummary();
+    showScreen(1);
+  });
+
+  /* =========================================================
+     Экран 1 — сводка
+     ========================================================= */
+  function updateSummary(editedEl) {
+    const budget = state.budget;
+    const total = round2(sumValues());
+    const remaining = round2(budget - total);
+    const pct = budget > 0 ? Math.min(100, (total / budget) * 100) : 0;
+    const over = (total - budget) > EPS;
+
+    // подсветка превышения
+    $$('.amount-input').forEach((i) => i.classList.remove('invalid'));
+    if (over && editedEl) editedEl.classList.add('invalid');
+
+    const remEl = document.getElementById('remainingVal');
+    remEl.textContent = fmt(remaining) + ' ₽';
+    remEl.classList.toggle('neg', remaining < -EPS);
+
+    document.getElementById('allocatedVal').textContent = fmt(total) + ' ₽';
+    document.getElementById('allocatedPct').textContent = Math.round(pct) + '%';
+
+    const bar = document.getElementById('allocBar');
+    bar.style.width = pct + '%';
+    bar.style.background = over
+      ? 'linear-gradient(90deg,#dc2626,#ef4444)'
+      : 'linear-gradient(90deg,#2563eb,#16a34a)';
+
+    const msg = document.getElementById('summaryMsg');
+    if (over) {
+      msg.textContent = 'Ты превысил бюджет на ' + fmt(-remaining) + ' ₽';
+      msg.className = 'summary-msg error';
+    } else if (Math.abs(remaining) < EPS) {
+      msg.textContent = 'Всё распределено — можно проверять!';
+      msg.className = 'summary-msg ok';
+    } else {
+      msg.textContent = 'Осталось распределить ' + fmt(remaining) + ' ₽';
+      msg.className = 'summary-msg';
+    }
+
+    document.getElementById('checkBtn').disabled = !(Math.abs(remaining) < EPS);
+    updateNoteHint();
+  }
+
+  /* =========================================================
+     Кнопки смены бюджета
+     ========================================================= */
+  function changeBudget() {
+    const total = sumValues();
+    if (total > 0) {
+      const ok = window.confirm('Введённые суммы будут сброшены. Продолжить?');
+      if (!ok) return;
+    }
+    state.budget = 0;
+    state.values = {};
+    state.note = '';
+
+    $$('.amount-input').forEach((i) => { i.value = ''; i.classList.remove('invalid'); });
+    const noteEl = document.getElementById('note-other');
+    if (noteEl) noteEl.value = '';
+    updateNoteHint();
+
+    budgetInput.value = '';
+    validateBudget();
+    showScreen(0);
+  }
+
+  document.getElementById('changeBudgetBtn1').addEventListener('click', changeBudget);
+  document.getElementById('changeBudgetBtn2').addEventListener('click', changeBudget);
+
+  /* =========================================================
+     Проверка бюджета и расчёт эффективности
+     ========================================================= */
+  document.getElementById('checkBtn').addEventListener('click', checkBudget);
+
+  function checkBudget() {
+    const b = state.budget;
+    const v = state.values;
+    const noteEl = document.getElementById('note-other');
+    const note = noteEl ? noteEl.value.trim() : '';
+    state.note = note;
+
+    const p = (id) => (b > 0 ? ((v[id] || 0) / b) * 100 : 0);
+
+    const issues = [];
+    let penalty = 0;
+
+    function add(type, text, pen) {
+      issues.push({ type: type, text: text });
+      penalty += (pen || 0);
+    }
+
+    /* --- Еда --- */
+    if (p('food') < 20) {
+      add('error', '🍔 Еда: ' + pctFmt(p('food')) + ' бюджета — меньше минимума 20%. Экономить на еде опасно для здоровья.', 25);
+    } else if (p('food') > 50) {
+      add('warn', '🍔 Еда: ' + pctFmt(p('food')) + ' бюджета — больше половины. Проверь, нет ли лишних трат.', 10);
+    } else {
+      add('ok', '🍔 Еда: ' + pctFmt(p('food')) + ' — в разумных пределах (20–50%).');
+    }
+
+    /* --- Жильё --- */
+    if (p('housing') < 15) {
+      add('error', '🏠 Жильё: ' + pctFmt(p('housing')) + ' — меньше 15%. Проверь, не забыл ли про оплату жилья.', 25);
+    } else if (p('housing') > 50) {
+      add('error', '🏠 Жильё: ' + pctFmt(p('housing')) + ' — больше 50%. Такая нагрузка на жильё опасна для бюджета.', 25);
+    } else {
+      add('ok', '🏠 Жильё: ' + pctFmt(p('housing')) + ' — комфортная доля (15–50%).');
+    }
+
+    /* --- Развлечения --- */
+    if (p('fun') > 15) {
+      add('warn', '🎮 Развлечения: ' + pctFmt(p('fun')) + ' — больше 15%. Нерациональная трата, стоит урезать.', 10);
+    } else {
+      add('ok', '🎮 Развлечения: ' + pctFmt(p('fun')) + ' — в норме (до 15%).');
+    }
+
+    /* --- Гигиена --- */
+    if ((v.hygiene || 0) <= 0) {
+      add('warn', '🧼 Средства личной гигиены: 0 ₽ — эта статья не может быть нулевой.', 10);
+    } else {
+      add('ok', '🧼 Средства личной гигиены: ' + fmt(v.hygiene) + ' ₽ — заложено.');
+    }
+
+    /* --- Одежда --- */
+    if ((v.clothes || 0) <= 0) {
+      add('warn', '👕 Одежда и обувь: 0 ₽ — стоит закладывать на износ вещей.', 10);
+    } else {
+      add('ok', '👕 Одежда и обувь: ' + fmt(v.clothes) + ' ₽ — заложено.');
+    }
+
+    /* --- Транспорт --- */
+    if ((v.transport || 0) <= 0) {
+      add('warn', '🚌 Транспорт: 0 ₽ — как ты будешь добираться? Заложи сумму.', 10);
+    } else {
+      add('ok', '🚌 Транспорт: ' + fmt(v.transport) + ' ₽ — заложено.');
+    }
+
+    /* --- Связь и интернет --- */
+    if ((v.internet || 0) <= 0) {
+      add('warn', '📱 Связь и интернет: 0 ₽ — без связи и интернета сейчас сложно.', 10);
+    } else {
+      add('ok', '📱 Связь и интернет: ' + fmt(v.internet) + ' ₽ — заложено.');
+    }
+
+    /* --- Разное --- */
+    const otherSum = v.other || 0;
+    if (p('other') > 20) {
+      add('warn', '📦 Разное: ' + pctFmt(p('other')) + ' — больше 20%. Слишком большой нецелевой резерв.', 10);
+    }
+    if (otherSum > 0 && !note) {
+      add('warn', '📦 Разное: не указано, на что именно. Рекомендуем уточнить назначение.', 5);
+    }
+    if (otherSum <= 0) {
+      add('ok', '📦 Разное: резерв не используется — все деньги распределены по целям.');
+    } else if (note && p('other') <= 20) {
+      add('ok', '📦 Разное: «' + note + '» — назначение указано, доля в норме.');
+    }
+
+    /* --- Итог --- */
+    const efficiency = Math.max(0, 100 - penalty);
+
+    // сортировка: ошибки -> предупреждения -> ок
+    const order = { error: 0, warn: 1, ok: 2 };
+    issues.sort((a, b2) => order[a.type] - order[b2.type]);
+
+    renderResult({
+      budget: b,
+      values: v,
+      note: note,
+      issues: issues,
+      efficiency: efficiency
+    });
+  }
+
+  /* =========================================================
+     Экран 2 — рендер результата
+     ========================================================= */
+  function renderResult(data) {
+    const b = data.budget;
+    const v = data.values;
+    const eff = data.efficiency;
+
+    document.getElementById('resBudget').textContent = fmt(b) + ' ₽';
+
+    /* --- Оценка --- */
+    const scoreNum = document.getElementById('scoreNum');
+    const scoreBar = document.getElementById('scoreBar');
+    const scoreEmoji = document.getElementById('scoreEmoji');
+    const verdictEl = document.getElementById('verdict');
+
+    scoreNum.textContent = eff + '%';
+    scoreBar.style.width = eff + '%';
+
+    let color, verdict, emoji;
+    if (eff >= 90) {
+      color = 'linear-gradient(90deg,#16a34a,#22c55e)';
+      verdict = 'Отличный бюджет! Ты грамотно распределил средства.';
+      emoji = '🎉';
+    } else if (eff >= 70) {
+      color = 'linear-gradient(90deg,#16a34a,#4ade80)';
+      verdict = 'Хороший бюджет, но есть зоны риска. Обрати внимание на предупреждения.';
+      emoji = '👍';
+    } else if (eff >= 50) {
+      color = 'linear-gradient(90deg,#f59e0b,#fbbf24)';
+      verdict = 'Бюджет сбалансирован слабо. Есть критичные статьи, которые нужно пересмотреть.';
+      emoji = '😐';
+    } else {
+      color = 'linear-gradient(90deg,#dc2626,#ef4444)';
+      verdict = 'Критическая ошибка: базовые потребности не покрыты. Пересмотри распределение.';
+      emoji = '⚠️';
+    }
+
+    scoreBar.style.background = color;
+    scoreNum.style.color = eff >= 70 ? '#15803d' : (eff >= 50 ? '#b45309' : '#b91c1c');
+    scoreEmoji.textContent = emoji;
+    verdictEl.textContent = verdict;
+
+    /* --- Сравнение с предыдущим расчётом --- */
+    const prev = loadLast();
+    const cmp = document.getElementById('prevCompare');
+    if (prev && typeof prev.efficiency === 'number' && typeof prev.budget === 'number') {
+      const diff = Math.round((eff - prev.efficiency) * 10) / 10;
+      const sign = diff > 0 ? '+' : '';
+      cmp.innerHTML =
+        'Предыдущий расчёт: ' + fmt(prev.budget) + ' ₽ — эффективность ' + prev.efficiency + '%. ' +
+        'Сейчас: <b>' + eff + '%</b> (' + sign + diff + ' п.п.)';
+      cmp.classList.add('show');
+    } else {
+      cmp.classList.remove('show');
+      cmp.innerHTML = '';
+    }
+
+    /* --- Таблица --- */
+    const rows = CATEGORIES.map((c) => {
+      const sum = v[c.id] || 0;
+      const share = b > 0 ? (sum / b) * 100 : 0;
+
+      let name = c.icon + ' ' + escapeHtml(c.label);
+      if (c.hasNote) {
+        name += data.note
+          ? ' <span class="note-text">(' + escapeHtml(data.note) + ')</span>'
+          : ' <span class="note-text">— не указано</span>';
+      }
+
+      return '<tr><td>' + name + '</td>' +
+             '<td class="num">' + fmt(sum) + ' ₽</td>' +
+             '<td class="num">' + pctFmt(share) + '</td></tr>';
+    }).join('');
+
+    document.getElementById('resultTable').innerHTML = rows;
+
+    const total = round2(sumValues());
+    const remaining = round2(b - total);
+
+    document.getElementById('resultFoot').innerHTML =
+      '<tr><td>Итого распределено</td>' +
+      '<td class="num">' + fmt(total) + ' ₽</td>' +
+      '<td class="num">' + pctFmt(b > 0 ? (total / b) * 100 : 0) + '</td></tr>' +
+      '<tr class="sub"><td>Остаток</td>' +
+      '<td class="num">' + fmt(remaining) + ' ₽</td>' +
+      '<td class="num">—</td></tr>';
+
+    /* --- Список замечаний --- */
+    const icons = { error: '⚠️', warn: '⚠️', ok: '✅' };
+    document.getElementById('issues').innerHTML = data.issues.map((it) => {
+      return '<div class="issue ' + it.type + '">' +
+               '<span class="ico">' + icons[it.type] + '</span>' +
+               '<span>' + escapeHtml(it.text) + '</span>' +
+             '</div>';
+    }).join('');
+
+    /* --- Сохраняем расчёт --- */
+    saveLast({
+      budget: b,
+      efficiency: eff,
+      values: v,
+      note: data.note,
+      date: Date.now()
+    });
+
+    showScreen(2);
+  }
+
+  /* =========================================================
+     «Попробовать снова»
+     ========================================================= */
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    state.values = {};
+    CATEGORIES.forEach((c) => { state.values[c.id] = 0; });
+    state.note = '';
+
+    $$('.amount-input').forEach((i) => {
+      i.value = '';
+      i.classList.remove('invalid');
+    });
+    const noteEl = document.getElementById('note-other');
+    if (noteEl) noteEl.value = '';
+
+    document.getElementById('budgetDisplay').textContent = fmt(state.budget) + ' ₽';
+    updateSummary();
+    showScreen(1);
+  });
+
+  /* =========================================================
+     Совет
+     ========================================================= */
+  document.getElementById('tipBtn').addEventListener('click', () => {
+    const box = document.getElementById('tipBox');
+    if (box.classList.contains('show')) {
+      box.classList.remove('show');
+      return;
+    }
+    box.textContent = '💡 ' + TIPS[Math.floor(Math.random() * TIPS.length)];
+    box.classList.add('show');
+  });
+
+  /* =========================================================
+     Инициализация
+     ========================================================= */
+  function init() {
+    buildCategories();
+
+    // Последний расчёт на экране 0
+    const prev = loadLast();
+    const lastCalc = document.getElementById('lastCalc');
+    if (prev && typeof prev.budget === 'number' && typeof prev.efficiency === 'number') {
+      lastCalc.innerHTML =
+        'Последний расчёт: <b>' + fmt(prev.budget) + ' ₽</b> — эффективность <b>' +
+        prev.efficiency + '%</b>';
+      lastCalc.classList.add('show');
+    }
+
+    validateBudget();
+    updateSummary();
+  }
+
+  init();
+})();
+</script>
 </body>
 </html>
